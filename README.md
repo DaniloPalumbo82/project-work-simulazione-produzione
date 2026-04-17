@@ -34,8 +34,8 @@ Il codice utilizza le seguenti funzioni:
 ## Tecnologie utilizzate
 - Python
 - Librerie:
-    random;
-    matplotlib;
+    random,
+    matplotlib
 
 ## Esecuzione del programma
 Per eseguire il codice:
