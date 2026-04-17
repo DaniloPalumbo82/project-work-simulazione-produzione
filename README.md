@@ -1,4 +1,4 @@
-# Simulazione di un processo produttivo nel settore primario mediante codice Python
+# Modellazione e simulazione di un processo di raccolta agricola tramite Python
 Simulazione di un processo produttivo nel settore primario sviluppata in Python
 
 ## Descrizione
