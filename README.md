@@ -24,18 +24,18 @@ Il programma consente di:
     Grafico comparativo
 
 ## Struttura del codice
-Il codice è organizzato in funzioni:
-  `generate_quantities()` → genera quantità casuali
-  `configuration()` → definisce parametri del sistema
-  `simulate_production()` → calcola tempi e giorni
-  `print_results()` → stampa risultati
-  `plot_results()` → genera grafico
+Il codice utilizza le seguenti funzioni:
+  - `generate_quantities()` → genera quantità casuali
+  - `configuration()` → definisce parametri del sistema
+  - `simulate_production()` → calcola tempi e giorni
+  - `print_results()` → stampa risultati
+  - `plot_results()` → genera grafico
 
 ## Tecnologie utilizzate
 - Python
 - Librerie:
-    random
-    matplotlib
+    random;
+    matplotlib;
 
 ## Esecuzione del programma
 Per eseguire il codice:
