@@ -1,1 +1,99 @@
-import random import matplotlib.pyplot as plt def generate_quantities(): return { "Mais": random.randint(50, 150), "Pomodori": random.randint(30, 100), "Patate": random.randint(40, 120) } def configuration(): return { "time_per_unit": { "manual": { "Mais": 0.20, "Pomodori": 0.30, "Patate": 0.25 }, "mechanized": { "Mais": 0.10, "Pomodori": 0.15, "Patate": 0.12 } }, "work_hours_per_day": 8 } def simulate_production(products, config, method): results = {} hours_per_day = config["work_hours_per_day"] for product, quantity in products.items(): time_per_unit = config["time_per_unit"][method][product] total_time = quantity * time_per_unit days_needed = total_time / hours_per_day results[product] = { "Quantità Prodotta": quantity, "Tempo Totale (ore)": round(total_time, 2), "Giorni Necessari (giorni)": round(days_needed, 2) } return results def plot_results(manual_results, mechanized_results): products = list(manual_results.keys()) manual_days = [manual_results[p]["Giorni Necessari (giorni)"] for p in products] mech_days = [mechanized_results[p]["Giorni Necessari (giorni)"] for p in products] x = range(len(products)) width = 0.35 plt.figure(figsize=(8, 5)) plt.bar([i - width/2 for i in x], manual_days, width=width, label="Manuale") plt.bar([i + width/2 for i in x], mech_days, width=width, label="Meccanizzato") plt.xticks(list(x), products) plt.xlabel("Prodotti") plt.ylabel("Giorni Necessari") plt.title("Confronto Tempi di Produzione") plt.legend() plt.tight_layout() plt.show() def print_results(title, results): print(f"\n{title}") print("-" * 78) print(f"{'Prodotto':<12} {'Quantità Prodotta':>20} {'Tempo Totale':>20} {'Giorni Necessari':>22}") print(f"{'':<12} {'(Kg)':>20} {'(Ore)':>20} {'(Giorni)':>22}") print("-" * 78) for product, data in results.items(): print( f"{product:<12} " f"{data['Quantità Prodotta']:>20} " f"{data['Tempo Totale (ore)']:>20.2f} " f"{data['Giorni Necessari (giorni)']:>22.2f}" ) products = generate_quantities() config = configuration() manual_results = simulate_production(products, config, "manual") mechanized_results = simulate_production(products, config, "mechanized") print_results("Produzione Manuale", manual_results) print_results("Produzione Meccanizzata", mechanized_results) plot_results(manual_results, mechanized_results)
+import random
+import matplotlib.pyplot as plt
+
+
+def generate_quantities():
+    return {
+        "Mais": random.randint(50, 150),
+        "Pomodori": random.randint(30, 100),
+        "Patate": random.randint(40, 120)
+    }
+
+
+def configuration():
+    return {
+        "time_per_unit": {
+            "manual": {
+                "Mais": 0.20,
+                "Pomodori": 0.30,
+                "Patate": 0.25
+            },
+            "mechanized": {
+                "Mais": 0.10,
+                "Pomodori": 0.15,
+                "Patate": 0.12
+            }
+        },
+        "work_hours_per_day": 8
+    }
+
+
+def simulate_production(products, config, method):
+    results = {}
+    hours_per_day = config["work_hours_per_day"]
+
+    for product, quantity in products.items():
+        time_per_unit = config["time_per_unit"][method][product]
+        total_time = quantity * time_per_unit
+        days_needed = total_time / hours_per_day
+
+        results[product] = {
+            "Quantità Prodotta": quantity,
+            "Tempo Totale (ore)": round(total_time, 2),
+            "Giorni Necessari (giorni)": round(days_needed, 2)
+        }
+
+    return results
+
+
+def plot_results(manual_results, mechanized_results):
+    products = list(manual_results.keys())
+    manual_days = [
+        manual_results[p]["Giorni Necessari (giorni)"] for p in products
+    ]
+    mech_days = [
+        mechanized_results[p]["Giorni Necessari (giorni)"] for p in products
+    ]
+
+    x = range(len(products))
+    width = 0.35
+
+    plt.figure(figsize=(8, 5))
+    plt.bar([i - width / 2 for i in x], manual_days, width=width, label="Manuale")
+    plt.bar([i + width / 2 for i in x], mech_days, width=width, label="Meccanizzato")
+
+    plt.xticks(list(x), products)
+    plt.xlabel("Prodotti")
+    plt.ylabel("Giorni Necessari")
+    plt.title("Confronto Tempi di Produzione")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def print_results(title, results):
+    print(f"\n{title}")
+    print("-" * 78)
+    print(f"{'Prodotto':<12} {'Quantità Prodotta':>20} {'Tempo Totale':>20} {'Giorni Necessari':>22}")
+    print(f"{'':<12} {'(Kg)':>20} {'(Ore)':>20} {'(Giorni)':>22}")
+    print("-" * 78)
+
+    for product, data in results.items():
+        print(
+            f"{product:<12} "
+            f"{data['Quantità Prodotta']:>20} "
+            f"{data['Tempo Totale (ore)']:>20.2f} "
+            f"{data['Giorni Necessari (giorni)']:>22.2f}"
+        )
+
+
+products = generate_quantities()
+config = configuration()
+
+manual_results = simulate_production(products, config, "manual")
+mechanized_results = simulate_production(products, config, "mechanized")
+
+print_results("Produzione Manuale", manual_results)
+print_results("Produzione Meccanizzata", mechanized_results)
+
+plot_results(manual_results, mechanized_results)
