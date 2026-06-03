@@ -69,7 +69,7 @@ def generate_quantities(hectares, config):
 
         products[product] = round(
             area * base_yield * variability,
-            2
+2
         )
 
     return products
@@ -183,22 +183,22 @@ def simulate_production(
 
             "Quantità Totale": round(
                 final_quantity,
-                2
+2
             ),
 
             "Tempo Totale (ore)": round(
                 total_time,
-                2
+2
             ),
 
             "Quantità al Giorno": round(
                 quantity_per_day,
-                2
+2
             ),
 
             "Ore al Giorno per unità": round(
                 hours_per_day_per_unit,
-                2
+2
             ),
 
             "Quantità per unità": quantities_per_unit,
@@ -356,4 +356,3 @@ print_results(
     machines,
     planned_days
 )
-
