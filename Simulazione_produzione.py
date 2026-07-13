@@ -1,9 +1,9 @@
 import random
 
 
-
-# SEZIONE RACCOLTA PARAMETRI UTENTE
-
+# --------------------------------------------------
+# RACCOLTA DEI PARAMETRI INSERITI DALL'UTENTE
+# --------------------------------------------------
 def get_initial_parameters():
 
     print("\nINSERIMENTO INFORMAZIONI PER LA RACCOLTA")
@@ -25,11 +25,9 @@ def get_initial_parameters():
         "Mais": float(
             input("Quanti ettari di mais?: ")
         ),
-
         "Pomodori": float(
             input("Quanti ettari di pomodori?: ")
         ),
-
         "Patate": float(
             input("Quanti ettari di patate?: ")
         )
@@ -38,9 +36,9 @@ def get_initial_parameters():
     return team_size, machines, planned_days, hectares
 
 
-
+# --------------------------------------------------
 # CONFIGURAZIONE DEL MODELLO
-
+# --------------------------------------------------
 def configuration():
 
     return {
@@ -52,7 +50,7 @@ def configuration():
             "Patate": 70
         },
 
-        # Tempo necessario per raccogliere un Kg
+        # Tempo necessario per raccogliere un Kg,
         # espresso in ore per Kg
         "time_per_unit": {
 
@@ -69,30 +67,32 @@ def configuration():
             }
         },
 
-        # Moltiplicatore della quantità richiesta
-        # in caso di raccolta meccanizzata
+        # Moltiplicatore applicato alla quantità richiesta
+        # nella modalità meccanizzata
         "machine_multiplier": 3,
 
-        # Numero massimo di ore lavorabili
-        # al giorno per ogni operaio o macchina
+        # Numero massimo di ore lavorabili al giorno
+        # per ciascun operaio o macchina
         "standard_hours_per_day": 8
     }
 
 
-
+# --------------------------------------------------
 # GENERAZIONE DELLE QUANTITÀ DI RACCOLTO
-
+# --------------------------------------------------
 def generate_quantities(hectares, config):
 
     products = {}
 
     for product, area in hectares.items():
 
-        # Recupera la resa media del prodotto
-        base_yield = config["yield_per_hectare"][product]
+        # Recupera la resa media per ettaro
+        base_yield = (
+            config["yield_per_hectare"][product]
+        )
 
-        # Introduce una variabilità casuale compresa
-        # tra l'80% e il 120% della resa prevista
+        # Introduce una variabilità casuale
+        # compresa tra l'80% e il 120%
         variability = random.uniform(0.8, 1.2)
 
         # Calcola la quantità prodotta
@@ -104,17 +104,14 @@ def generate_quantities(hectares, config):
     return products
 
 
-
-# DIVIDE UNA QUANTITÀ IN MODO UNIFORME
-# TRA LE UNITÀ OPERATIVE
-
+# --------------------------------------------------
+# DIVISIONE UNIFORME TRA LE UNITÀ OPERATIVE
+# --------------------------------------------------
 def split_quantity_uniformly(total_quantity, units):
 
-    # Controllo per evitare una divisione per zero
     if units <= 0:
         return []
 
-    # Quantità base assegnata a ogni unità
     base_quantity = round(
         total_quantity / units,
         2
@@ -125,9 +122,8 @@ def split_quantity_uniformly(total_quantity, units):
         for _ in range(units)
     ]
 
-    # Corregge l'ultima unità per fare in modo
-    # che la somma delle quantità corrisponda
-    # esattamente alla quantità totale
+    # Corregge l'ultima unità per compensare
+    # eventuali differenze di arrotondamento
     quantities[-1] = round(
         total_quantity - sum(quantities[:-1]),
         2
@@ -136,9 +132,9 @@ def split_quantity_uniformly(total_quantity, units):
     return quantities
 
 
-
+# --------------------------------------------------
 # SIMULAZIONE DELLA PRODUZIONE
-
+# --------------------------------------------------
 def simulate_production(
     products,
     config,
@@ -150,65 +146,45 @@ def simulate_production(
 
     results = {}
 
-    # Controlli sui parametri principali
     if units <= 0:
         raise ValueError(
-            "Il numero di operatori o macchine deve essere maggiore di zero."
+            "Il numero di operatori o macchine "
+            "deve essere maggiore di zero."
         )
 
     if planned_days <= 0:
         raise ValueError(
-            "Il numero di giorni deve essere maggiore di zero."
+            "Il numero di giorni deve essere "
+            "maggiore di zero."
         )
 
-    # Numero massimo di ore giornaliere
-    # per ogni operaio o macchina
     standard_hours_per_day = (
         config["standard_hours_per_day"]
     )
 
-    
-    # Esempio:
-    # 3 operai × 5 giorni × 8 ore = 120 ore totali.
-    #
-    # Le 120 ore devono essere utilizzate complessivamente
-    # per Mais, Pomodori e Patate.
-    
-    
+    # Monte ore complessivo disponibile
     total_available_hours = (
         planned_days *
         standard_hours_per_day *
         units
     )
 
-    # Ore ancora disponibili durante la simulazione
-    remaining_hours = total_available_hours
+    requested_quantities = {}
+    required_hours = {}
 
-    # I prodotti vengono lavorati nell'ordine:
-    # Mais, Pomodori, Patate
+    # --------------------------------------------------
+    # PRIMA FASE:
+    # CALCOLO DELLE QUANTITÀ RICHIESTE
+    # E DELLE ORE NECESSARIE PER TUTTI I PRODOTTI
+    # --------------------------------------------------
     for product, base_quantity in products.items():
 
-        # Tempo necessario per raccogliere una unità di prodotto
-        # 
         time_per_unit = (
             config["time_per_unit"][method][product]
         )
 
-        # Resa media prevista per ettaro
-        base_yield = (
-            config["yield_per_hectare"][product]
-        )
-
-        # Ettari coltivati per il prodotto
-        cultivated_hectares = hectares[product]
-
-        
-        # DETERMINA LA QUANTITÀ RICHIESTA
-        
         if method == "mechanized":
 
-            # Nel metodo meccanizzato viene applicato
-            # il moltiplicatore configurato
             requested_quantity = (
                 base_quantity *
                 config["machine_multiplier"]
@@ -216,103 +192,113 @@ def simulate_production(
 
         else:
 
-            # Nel metodo manuale si utilizza direttamente la quantità prodotta
-            # 
             requested_quantity = base_quantity
 
-        
-        # CALCOLO DELLA QUANTITÀ MASSIMA LAVORABILE CON LE ORE ANCORA DISPONIBILI
-        # 
-        
-        if remaining_hours > 0:
-
-            max_possible_quantity = (
-                remaining_hours /
-                time_per_unit
-            )
-
-        else:
-
-            max_possible_quantity = 0
-
-        # La quantità finale non può superare:
-        # 1. la quantità richiesta;
-        # 2. la quantità lavorabile con le ore residue.
-        final_quantity = min(
-            requested_quantity,
-            max_possible_quantity
+        requested_quantities[product] = (
+            requested_quantity
         )
 
-        
-        final_quantity = round(
-            final_quantity,
-            2
-        )
-
-        
-        # CALCOLI PRINCIPALI
-        
-
-        # Ore totali necessarie per il prodotto
-        total_time = (
-            final_quantity *
+        required_hours[product] = (
+            requested_quantity *
             time_per_unit
         )
 
-        
-        total_time = round(
-            total_time,
+    # Ore necessarie per raccogliere tutti i prodotti
+    total_required_hours = sum(
+        required_hours.values()
+    )
+
+    # --------------------------------------------------
+    # FATTORE DI RACCOLTA
+    # --------------------------------------------------
+    #
+    # Se le ore disponibili sono sufficienti,
+    # il fattore vale 1 e viene raccolto il 100%.
+    #
+    # Se le ore non bastano, tutti i prodotti
+    # vengono ridotti nella stessa proporzione.
+    # --------------------------------------------------
+    if total_required_hours > 0:
+
+        collection_factor = min(
+            1,
+            total_available_hours /
+            total_required_hours
+        )
+
+    else:
+
+        collection_factor = 0
+
+    # --------------------------------------------------
+    # SECONDA FASE:
+    # CALCOLO DEI RISULTATI PER OGNI PRODOTTO
+    # --------------------------------------------------
+    used_hours = 0
+
+    for product in products:
+
+        time_per_unit = (
+            config["time_per_unit"][method][product]
+        )
+
+        base_yield = (
+            config["yield_per_hectare"][product]
+        )
+
+        cultivated_hectares = (
+            hectares[product]
+        )
+
+        requested_quantity = (
+            requested_quantities[product]
+        )
+
+        # Tutti i prodotti ricevono la stessa
+        # percentuale del monte ore disponibile
+        final_quantity = round(
+            requested_quantity *
+            collection_factor,
             2
         )
 
-        
-        # AGGIORNA IL MONTE ORE RESIDUO
-        
-        #
-        # Le ore utilizzate per questo prodotto vengono sottratte dalle ore complessivamente disponibili.
-
-        
-        remaining_hours = max(
-            0,
-            remaining_hours - total_time
+        total_time = round(
+            final_quantity *
+            time_per_unit,
+            2
         )
 
-        # Quantità totale raccolta ogni giorno
+        used_hours += total_time
+
         quantity_per_day = (
             final_quantity /
             planned_days
         )
 
-        # Ore giornaliere medie per ogni unità relative al singolo prodotto
-       
         hours_per_day_per_unit = (
             total_time /
             (planned_days * units)
         )
 
-        
-        # DIVISIONE UNIFORME TRA LE UNITÀ
-        
-        quantities_per_unit = split_quantity_uniformly(
-            final_quantity,
-            units
+        collection_percentage = (
+            collection_factor * 100
         )
 
-        # Calcola le ore totali assegnate a ogni singolo operaio o macchina
-         
-        hours_per_unit = [
+        quantities_per_unit = (
+            split_quantity_uniformly(
+                final_quantity,
+                units
+            )
+        )
 
+        hours_per_unit = [
             round(
                 quantity * time_per_unit,
                 2
             )
-
             for quantity in quantities_per_unit
         ]
 
-        
-        # SALVATAGGIO DEI RISULTATI
-        
         results[product] = {
 
             "Ettari": cultivated_hectares,
@@ -326,6 +312,11 @@ def simulate_production(
 
             "Quantità Totale": round(
                 final_quantity,
+                2
+            ),
+
+            "Percentuale Raccolta": round(
+                collection_percentage,
                 2
             ),
 
@@ -346,20 +337,29 @@ def simulate_production(
 
             "Quantità per unità": quantities_per_unit,
 
-            "Ore per unità": hours_per_unit,
-
-            "Ore residue": round(
-                remaining_hours,
-                2
-            )
+            "Ore per unità": hours_per_unit
         }
+
+    # Calcolo delle ore residue complessive
+    remaining_hours = max(
+        0,
+        total_available_hours - used_hours
+    )
+
+    # Salva le ore residue in ogni prodotto
+    for data in results.values():
+
+        data["Ore residue"] = round(
+            remaining_hours,
+            2
+        )
 
     return results
 
 
-
+# --------------------------------------------------
 # STAMPA DEI RISULTATI
-
+# --------------------------------------------------
 def print_results(
     title,
     results,
@@ -368,76 +368,77 @@ def print_results(
     planned_days
 ):
 
-    
-    # RIEPILOGO TOTALE (Dettaglio dopo)
-    
-    print(f"\n{title} - RIEPILOGO")
+    # --------------------------------------------------
+    # RIEPILOGO GENERALE
+    # --------------------------------------------------
+    summary_width = 96
 
-    print("-" * 110)
+    print(f"\n{title} - RIEPILOGO")
+    print("-" * summary_width)
 
     print(
         f"{'Prodotto':<12}"
-        f"{'Ettari':>10}"
-        f"{'Resa/ha':>12}"
-        f"{'Quantità richiesta':>22}"
-        f"{'Quantità raccolta':>22}"
-        f"{'Ore Totali':>15}"
-        f"{'Kg/Giorno':>15}"
+        f"{'Ettari':>8}"
+        f"{'Resa/ha':>10}"
+        f"{'Kg richiesti':>15}"
+        f"{'Kg raccolti':>15}"
+        f"{'% raccolta':>12}"
+        f"{'Ore':>11}"
+        f"{'Kg/giorno':>13}"
     )
 
-    print("-" * 110)
+    print("-" * summary_width)
 
     for product, data in results.items():
 
         print(
             f"{product:<12}"
-            f"{data['Ettari']:>10.2f}"
-            f"{data['Resa per Ettaro']:>12.2f}"
-            f"{data['Quantità Richiesta']:>22.2f}"
-            f"{data['Quantità Totale']:>22.2f}"
-            f"{data['Tempo Totale (ore)']:>15.2f}"
-            f"{data['Quantità al Giorno']:>15.2f}"
+            f"{data['Ettari']:>8.2f}"
+            f"{data['Resa per Ettaro']:>10.2f}"
+            f"{data['Quantità Richiesta']:>15.2f}"
+            f"{data['Quantità Totale']:>15.2f}"
+            f"{data['Percentuale Raccolta']:>11.2f}%"
+            f"{data['Tempo Totale (ore)']:>11.2f}"
+            f"{data['Quantità al Giorno']:>13.2f}"
         )
 
-    
+    print("-" * summary_width)
+
+    # --------------------------------------------------
     # DETTAGLIO PER OPERAIO O MACCHINA
-    
+    # --------------------------------------------------
     if units > 1:
 
-        print(f"\n{title} - DETTAGLIO")
+        detail_width = 82
 
-        print("-" * 95)
+        print(f"\n{title} - DETTAGLIO")
+        print("-" * detail_width)
 
         print(
-            f"{'Unità':<15}"
+            f"{'Unità':<14}"
             f"{'Prodotto':<12}"
-            f"{'Kg Totali':>15}"
-            f"{'Ore Totali':>15}"
-            f"{'Kg/Giorno':>15}"
-            f"{'Ore/Giorno':>15}"
+            f"{'Kg totali':>14}"
+            f"{'Ore totali':>14}"
+            f"{'Kg/giorno':>14}"
+            f"{'Ore/giorno':>14}"
         )
 
-        print("-" * 95)
+        print("-" * detail_width)
 
         for i in range(units):
 
             for product, data in results.items():
 
-                # Quantità giornaliera assegnata alla singola unità
-                 
                 quantity_per_day_unit = (
                     data["Quantità per unità"][i] /
                     planned_days
                 )
 
-                # Ore giornaliere relative al singolo prodotto
-                 
                 hours_per_day_unit = (
                     data["Ore per unità"][i] /
                     planned_days
                 )
 
-                # Determina l'etichetta da visualizzare
                 if unit_name == "persona":
 
                     unit_label = (
@@ -451,42 +452,41 @@ def print_results(
                     )
 
                 print(
-                    f"{unit_label:<15}"
+                    f"{unit_label:<14}"
                     f"{product:<12}"
-                    f"{data['Quantità per unità'][i]:>15.2f}"
-                    f"{data['Ore per unità'][i]:>15.2f}"
-                    f"{quantity_per_day_unit:>15.2f}"
-                    f"{hours_per_day_unit:>15.2f}"
+                    f"{data['Quantità per unità'][i]:>14.2f}"
+                    f"{data['Ore per unità'][i]:>14.2f}"
+                    f"{quantity_per_day_unit:>14.2f}"
+                    f"{hours_per_day_unit:>14.2f}"
                 )
 
-        
-        # TOTALE GIORNALIERO PER OGNI UNITÀ
-        
+        print("-" * detail_width)
+
+        # --------------------------------------------------
+        # TOTALE GIORNALIERO PER UNITÀ
+        # --------------------------------------------------
+        total_width = 45
+
         print(
             f"\n{title} - TOTALE GIORNALIERO PER UNITÀ"
         )
 
-        print("-" * 55)
+        print("-" * total_width)
 
         print(
             f"{'Unità':<20}"
-            f"{'Ore/Giorno Totali':>25}"
+            f"{'Ore/giorno totali':>25}"
         )
 
-        print("-" * 55)
+        print("-" * total_width)
 
         for i in range(units):
 
-            # Somma delle ore dell'unità su tutti i prodotti
-             
             total_hours_unit = sum(
-
                 data["Ore per unità"][i]
-
                 for data in results.values()
             )
 
-            # Ore giornaliere complessive
             total_hours_per_day_unit = (
                 total_hours_unit /
                 planned_days
@@ -509,10 +509,12 @@ def print_results(
                 f"{total_hours_per_day_unit:>25.2f}"
             )
 
+        print("-" * total_width)
 
 
-
-
+# --------------------------------------------------
+# PROGRAMMA PRINCIPALE
+# --------------------------------------------------
 
 # Carica la configurazione
 config = configuration()
