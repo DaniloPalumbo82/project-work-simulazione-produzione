@@ -130,17 +130,8 @@ Visualizza i risultati mediante:
 - dettaglio della produzione per ogni operaio o macchina;
 - totale delle ore giornaliere assegnate a ciascuna unità operativa.
 
----
 
-## Tecnologie utilizzate
 
-- **Python 3**
-
-### Librerie
-
-- `random`
-
----
 
 ## Esecuzione del programma
 
