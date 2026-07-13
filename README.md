@@ -4,103 +4,156 @@ Simulazione di un processo produttivo nel settore primario sviluppata in Python.
 
 ## Descrizione
 
-Questo progetto è stato realizzato nell'ambito del corso di Informatica per le Aziende Digitali.
+Questo progetto è stato realizzato nell'ambito del corso di **Informatica per le Aziende Digitali**.
 
 L'obiettivo del progetto è simulare un processo produttivo agricolo utilizzando Python, confrontando due differenti modalità operative:
 
-* Produzione manuale
-* Produzione meccanizzata
+- **Produzione manuale**
+- **Produzione meccanizzata**
 
-Il modello rappresenta in forma semplificata un processo di raccolta agricola, introducendo elementi realistici come:
+Il modello rappresenta una versione semplificata ma realistica di un processo di raccolta agricola, introducendo elementi tipici della pianificazione delle risorse, quali:
 
-* resa per ettaro,
-* disponibilità delle risorse,
-* limite massimo di ore lavorabili,
-* distribuzione del lavoro tra unità operative,
-* variabilità casuale delle quantità prodotte.
+- resa per ettaro;
+- disponibilità di operatori e macchine;
+- limite massimo di ore lavorabili;
+- distribuzione del lavoro tra le unità operative;
+- variabilità casuale della produzione;
+- gestione del monte ore disponibile durante l'intero processo di raccolta.
+
+---
 
 ## Funzionalità principali
 
 Il programma consente di:
 
-* Inserire parametri iniziali personalizzabili:
+- inserire parametri iniziali personalizzabili:
+  - numero di operai;
+  - numero di macchine;
+  - giorni previsti per la raccolta;
+  - ettari coltivati per ciascun prodotto.
 
-  * numero di operai,
-  * numero di macchine,
-  * giorni previsti per la raccolta,
-  * ettari coltivati per ciascun prodotto.
+- generare quantità produttive variabili per tre colture:
+  - Mais;
+  - Pomodori;
+  - Patate.
 
-* Generare quantità produttive variabili per tre prodotti agricoli:
+- simulare due differenti modalità di raccolta:
+  - manuale;
+  - meccanizzata.
 
-  * Mais
-  * Pomodori
-  * Patate
+- configurare facilmente:
+  - resa per ettaro;
+  - tempi di raccolta per chilogrammo;
+  - capacità produttiva delle macchine;
+  - ore massime lavorabili giornalmente.
 
-* Calcolare la produzione considerando:
+- calcolare automaticamente:
+  - quantità totale raccoglibile;
+  - tempo totale necessario;
+  - quantità raccolta giornalmente;
+  - ore di lavoro giornaliere;
+  - distribuzione del lavoro tra operai o macchine.
 
-  * resa per ettaro,
-  * variabilità casuale,
-  * tempi di lavorazione differenti,
-  * modalità manuale o meccanizzata.
+- verificare il rispetto della capacità produttiva disponibile attraverso un **monte ore complessivo**, che viene progressivamente consumato durante la simulazione.
 
-* Configurare:
+---
 
-  * tempi di raccolta per unità di prodotto,
-  * capacità produttiva del metodo meccanizzato,
-  * limite massimo di 8 ore giornaliere per unità operativa.
+## Logica della simulazione
 
-* Simulare il processo produttivo per due modalità differenti:
+Il modello segue il seguente flusso operativo:
 
-  * raccolta manuale,
-  * raccolta meccanizzata.
+1. Acquisizione dei parametri iniziali inseriti dall'utente.
 
-* Calcolare:
+2. Generazione delle quantità producibili introducendo una variabilità casuale compresa tra l'80% e il 120% della resa prevista.
 
-  * quantità totale raccoglibile,
-  * tempo totale necessario,
-  * quantità giornaliera,
-  * ore giornaliere per unità,
-  * distribuzione del lavoro tra operai o macchine.
+3. Calcolo della quantità richiesta per ciascun prodotto.
 
-* Visualizzare i risultati tramite:
+4. Calcolo del monte ore massimo disponibile secondo la formula:
 
-  * tabella riepilogativa generale,
-  * tabella di dettaglio per singola unità operativa.
+   **Numero di unità × Giorni di lavoro × 8 ore**
+
+5. Per ogni prodotto viene determinata la quantità effettivamente lavorabile in funzione delle ore ancora disponibili.
+
+6. Dopo ogni lavorazione il monte ore residuo viene aggiornato.
+
+7. La produzione viene distribuita uniformemente tra tutte le unità operative, garantendo una ripartizione equilibrata del carico di lavoro.
+
+8. I risultati vengono presentati sia in forma aggregata sia nel dettaglio di ciascun operaio o macchina, riportando anche il totale delle ore giornaliere assegnate.
+
+---
 
 ## Struttura del codice
 
-Il codice utilizza le seguenti funzioni:
+Il progetto è organizzato nelle seguenti funzioni.
 
-* `get_initial_parameters()`
-  raccoglie i parametri iniziali inseriti dall’utente.
+### **`get_initial_parameters()`**
 
-* `configuration()`
-  definisce i parametri principali del modello.
+Raccoglie tutti i parametri iniziali inseriti dall'utente necessari per l'esecuzione della simulazione.
 
-* `generate_quantities()`
-  genera le quantità produttive in base a ettari, resa per ettaro e variabilità casuale.
+### **`configuration()`**
 
-* `split_quantity()`
-  distribuisce il lavoro tra le unità operative.
+Definisce i principali parametri configurabili del modello, tra cui:
 
-* `simulate_production()`
-  esegue la simulazione del processo produttivo.
+- resa per ettaro;
+- tempi di raccolta;
+- moltiplicatore della raccolta meccanizzata;
+- numero massimo di ore lavorabili giornalmente.
 
-* `print_results()`
-  stampa i risultati in formato tabellare.
+### **`generate_quantities()`**
+
+Genera le quantità producibili per ciascuna coltura introducendo una variabilità casuale rispetto alla resa teorica.
+
+### **`split_quantity_uniformly()`**
+
+Distribuisce uniformemente la quantità di prodotto tra tutte le unità operative.
+
+Questa funzione sostituisce la precedente distribuzione casuale, garantendo una ripartizione equilibrata del lavoro.
+
+### **`simulate_production()`**
+
+Rappresenta il cuore della simulazione.
+
+La funzione:
+
+- calcola il monte ore disponibile;
+- determina la quantità massima lavorabile;
+- aggiorna il monte ore residuo dopo ogni lavorazione;
+- calcola tempi e quantità di produzione;
+- assegna il lavoro alle singole unità operative;
+- memorizza tutti i risultati della simulazione.
+
+### **`print_results()`**
+
+Visualizza i risultati mediante:
+
+- tabella riepilogativa generale;
+- dettaglio della produzione per ogni operaio o macchina;
+- totale delle ore giornaliere assegnate a ciascuna unità operativa.
+
+---
 
 ## Tecnologie utilizzate
 
-* Python
+- **Python 3**
 
-* Librerie:
+### Librerie
 
-  * `random`
+- `random`
+
+---
 
 ## Esecuzione del programma
 
-Per eseguire il codice:
+Per eseguire il programma:
 
 ```bash
 python simulazione_produzione.py
 ```
+
+
+
+## Conclusioni
+
+Il progetto mostra come sia possibile utilizzare Python per modellare e simulare un processo produttivo agricolo, applicando concetti di pianificazione delle risorse, gestione della capacità produttiva e distribuzione del lavoro.
+
+L'introduzione di un **monte ore complessivo disponibile**, aggiornato progressivamente durante la simulazione, rende il modello più aderente a uno scenario reale rispetto a una semplice limitazione delle ore per singolo prodotto. Inoltre, la distribuzione uniforme del lavoro tra le unità operative consente di rappresentare un'organizzazione più equilibrata delle attività, facilitando l'analisi delle prestazioni sia della raccolta manuale sia di quella meccanizzata.
