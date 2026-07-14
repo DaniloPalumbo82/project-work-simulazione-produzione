@@ -54,7 +54,7 @@ Il programma consente di:
   - ore di lavoro giornaliere;
   - distribuzione del lavoro tra operai o macchine.
 
-- verificare il rispetto della capacità produttiva disponibile attraverso un **monte ore complessivo**, che viene progressivamente consumato durante la simulazione.
+- verificare il rispetto della capacità produttiva disponibile attraverso un **monte ore complessivo**, riducendo automaticamente la quantità raccoglibile quando le risorse non sono sufficienti.
 
 ---
 
@@ -72,9 +72,9 @@ Il modello segue il seguente flusso operativo:
 
    **Numero di unità × Giorni di lavoro × 8 ore**
 
-5. Per ogni prodotto viene determinata la quantità effettivamente lavorabile in funzione delle ore ancora disponibili.
+5. Calcolo del tempo complessivamente necessario per raccogliere tutte le colture.
 
-6. Dopo ogni lavorazione il monte ore residuo viene aggiornato.
+6. Se il monte ore disponibile non è sufficiente, il programma riduce proporzionalmente la quantità raccoglibile di tutti i prodotti.
 
 7. La produzione viene distribuita uniformemente tra tutte le unità operative, garantendo una ripartizione equilibrata del carico di lavoro.
 
@@ -115,11 +115,11 @@ Rappresenta il cuore della simulazione.
 
 La funzione:
 
-- calcola il monte ore disponibile;
-- determina la quantità massima lavorabile;
-- aggiorna il monte ore residuo dopo ogni lavorazione;
+- calcola il monte ore complessivamente disponibile;
+- determina il tempo necessario per l'intera produzione;
+- riduce proporzionalmente le quantità quando la capacità disponibile non è sufficiente;
 - calcola tempi e quantità di produzione;
-- assegna il lavoro alle singole unità operative;
+- distribuisce uniformemente il lavoro tra le unità operative;
 - memorizza tutti i risultati della simulazione.
 
 ### **`print_results()`**
@@ -130,8 +130,7 @@ Visualizza i risultati mediante:
 - dettaglio della produzione per ogni operaio o macchina;
 - totale delle ore giornaliere assegnate a ciascuna unità operativa.
 
-
-
+---
 
 ## Esecuzione del programma
 
@@ -141,10 +140,10 @@ Per eseguire il programma:
 python simulazione_produzione.py
 ```
 
-
+---
 
 ## Conclusioni
 
 Il progetto mostra come sia possibile utilizzare Python per modellare e simulare un processo produttivo agricolo, applicando concetti di pianificazione delle risorse, gestione della capacità produttiva e distribuzione del lavoro.
 
-L'introduzione di un **monte ore complessivo disponibile**, aggiornato progressivamente durante la simulazione, rende il modello più aderente a uno scenario reale rispetto a una semplice limitazione delle ore per singolo prodotto. Inoltre, la distribuzione uniforme del lavoro tra le unità operative consente di rappresentare un'organizzazione più equilibrata delle attività, facilitando l'analisi delle prestazioni sia della raccolta manuale sia di quella meccanizzata.
+L'introduzione di un **monte ore complessivo disponibile** rende il modello più aderente a uno scenario reale, poiché il programma confronta il tempo richiesto dall'intera produzione con la capacità operativa disponibile e, se necessario, riduce proporzionalmente la quantità raccoglibile di tutte le colture. Inoltre, la distribuzione uniforme del lavoro tra le unità operative consente di rappresentare un'organizzazione più equilibrata delle attività, facilitando il confronto tra raccolta manuale e raccolta meccanizzata.
