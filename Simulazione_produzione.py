@@ -1,9 +1,9 @@
 import random
 
 
-# --------------------------------------------------
+
 # RACCOLTA DEI PARAMETRI INSERITI DALL'UTENTE
-# --------------------------------------------------
+
 def get_initial_parameters():
 
     print("\nINSERIMENTO INFORMAZIONI PER LA RACCOLTA")
@@ -36,9 +36,9 @@ def get_initial_parameters():
     return team_size, machines, planned_days, hectares
 
 
-# --------------------------------------------------
-# CONFIGURAZIONE DEL MODELLO
-# --------------------------------------------------
+
+# CONFIGURAZIONE
+
 def configuration():
 
     return {
@@ -50,8 +50,8 @@ def configuration():
             "Patate": 70
         },
 
-        # Tempo necessario per raccogliere un Kg,
-        # espresso in ore per Kg
+        # Tempo necessario per raccogliere un Kg, espresso in ore per Kg
+         
         "time_per_unit": {
 
             "manual": {
@@ -67,19 +67,19 @@ def configuration():
             }
         },
 
-        # Moltiplicatore applicato alla quantità richiesta
-        # nella modalità meccanizzata
+        # Moltiplicatore applicato alla quantità richiesta nella modalità meccanizzata
+         
         "machine_multiplier": 3,
 
-        # Numero massimo di ore lavorabili al giorno
-        # per ciascun operaio o macchina
+        # Numero massimo di ore lavorabili al giorno per ciascun operaio o macchina
+         
         "standard_hours_per_day": 8
     }
 
 
-# --------------------------------------------------
-# GENERAZIONE DELLE QUANTITÀ DI RACCOLTO
-# --------------------------------------------------
+
+# GENERAZIONE DELLE QUANTITÀ 
+
 def generate_quantities(hectares, config):
 
     products = {}
@@ -92,7 +92,7 @@ def generate_quantities(hectares, config):
         )
 
         # Introduce una variabilità casuale
-        # compresa tra l'80% e il 120%
+        
         variability = random.uniform(0.8, 1.2)
 
         # Calcola la quantità prodotta
@@ -104,9 +104,9 @@ def generate_quantities(hectares, config):
     return products
 
 
-# --------------------------------------------------
+
 # DIVISIONE UNIFORME TRA LE UNITÀ OPERATIVE
-# --------------------------------------------------
+
 def split_quantity_uniformly(total_quantity, units):
 
     if units <= 0:
@@ -122,8 +122,8 @@ def split_quantity_uniformly(total_quantity, units):
         for _ in range(units)
     ]
 
-    # Corregge l'ultima unità per compensare
-    # eventuali differenze di arrotondamento
+    # Corregge l'ultima unità per compensare eventuali differenze di arrotondamento
+     
     quantities[-1] = round(
         total_quantity - sum(quantities[:-1]),
         2
@@ -132,9 +132,9 @@ def split_quantity_uniformly(total_quantity, units):
     return quantities
 
 
-# --------------------------------------------------
+
 # SIMULAZIONE DELLA PRODUZIONE
-# --------------------------------------------------
+
 def simulate_production(
     products,
     config,
@@ -172,11 +172,7 @@ def simulate_production(
     requested_quantities = {}
     required_hours = {}
 
-    # --------------------------------------------------
-    # PRIMA FASE:
-    # CALCOLO DELLE QUANTITÀ RICHIESTE
-    # E DELLE ORE NECESSARIE PER TUTTI I PRODOTTI
-    # --------------------------------------------------
+    
     for product, base_quantity in products.items():
 
         time_per_unit = (
@@ -208,16 +204,7 @@ def simulate_production(
         required_hours.values()
     )
 
-    # --------------------------------------------------
-    # FATTORE DI RACCOLTA
-    # --------------------------------------------------
-    #
-    # Se le ore disponibili sono sufficienti,
-    # il fattore vale 1 e viene raccolto il 100%.
-    #
-    # Se le ore non bastano, tutti i prodotti
-    # vengono ridotti nella stessa proporzione.
-    # --------------------------------------------------
+    
     if total_required_hours > 0:
 
         collection_factor = min(
@@ -230,10 +217,9 @@ def simulate_production(
 
         collection_factor = 0
 
-    # --------------------------------------------------
-    # SECONDA FASE:
+    
     # CALCOLO DEI RISULTATI PER OGNI PRODOTTO
-    # --------------------------------------------------
+    
     used_hours = 0
 
     for product in products:
@@ -254,8 +240,8 @@ def simulate_production(
             requested_quantities[product]
         )
 
-        # Tutti i prodotti ricevono la stessa
-        # percentuale del monte ore disponibile
+        # Tutti i prodotti ricevono la stessa percentuale del monte ore disponibile
+        
         final_quantity = round(
             requested_quantity *
             collection_factor,
@@ -357,9 +343,9 @@ def simulate_production(
     return results
 
 
-# --------------------------------------------------
+
 # STAMPA DEI RISULTATI
-# --------------------------------------------------
+
 def print_results(
     title,
     results,
@@ -368,9 +354,9 @@ def print_results(
     planned_days
 ):
 
-    # --------------------------------------------------
+    
     # RIEPILOGO GENERALE
-    # --------------------------------------------------
+    
     summary_width = 96
 
     print(f"\n{title} - RIEPILOGO")
@@ -404,9 +390,9 @@ def print_results(
 
     print("-" * summary_width)
 
-    # --------------------------------------------------
+    
     # DETTAGLIO PER OPERAIO O MACCHINA
-    # --------------------------------------------------
+    
     if units > 1:
 
         detail_width = 82
@@ -462,9 +448,9 @@ def print_results(
 
         print("-" * detail_width)
 
-        # --------------------------------------------------
+        
         # TOTALE GIORNALIERO PER UNITÀ
-        # --------------------------------------------------
+        
         total_width = 45
 
         print(
@@ -512,9 +498,9 @@ def print_results(
         print("-" * total_width)
 
 
-# --------------------------------------------------
+
 # PROGRAMMA PRINCIPALE
-# --------------------------------------------------
+
 
 # Carica la configurazione
 config = configuration()
